@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JP7 Ultrassom — Diagnóstico de Composição Corporal</title>
+    <meta name="description" content="Diagnóstico de composição corporal por ultrassom modo-A — Protocolo Jackson & Pollock 3 e 7 dobras SAT">
+    <meta name="theme-color" content="#1a73e8">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkpQNyBVbHRyYXNzb20iLAogICJzaG9ydF9uYW1lIjogIkpQNyBVUyIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjhmOWZhIiwKICAidGhlbWVfY29sb3IiOiAiIzFhNzNlOCIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjxyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjAnIGZpbGw9JyMxYTczZTgnLz48dGV4dCB4PSc1MCcgeT0nNjUnIGZvbnQtc2l6ZT0nNTAnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9J3doaXRlJyBmb250LWZhbWlseT0nQXJpYWwnPkpQPC90ZXh0Pjwvc3ZnPiIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
+    <style>
+        /* ===== TEMAS ===== */
+        body.theme-light {
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #202124;
+            --text-secondary: #5f6368;
+            --border: #dadce0;
+            --input-bg: #ffffff;
+            --results-bg: #e8f0fe;
+            --history-bg: #f1f3f4;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        body.theme-dark {
+            --bg: #1b1f23;
+            --card: #242930;
+            --text: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border: #444c56;
+            --input-bg: #1b1f23;
+            --results-bg: #1e2a38;
+            --history-bg: #1e2328;
+            --shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+        body.theme-sepia {
+            --bg: #f4ecd8;
+            --card: #faf3e6;
+            --text: #3e2c1c;
+            --text-secondary: #6b5b4e;
+            --border: #c4b998;
+            --input-bg: #fdf6ea;
+            --results-bg: #f0e4d0;
+            --history-bg: #ece1cc;
+            --shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        :root {
+            --primary: #1a73e8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+            transition: background 0.3s, border-color 0.3s;
+        }
+        h1 { font-size: 1.5rem; color: var(--primary); margin-bottom: 4px; }
+        .subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem; color: var(--text); }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            background: var(--input-bg);
+            color: var(--text);
+            transition: border-color 0.2s, background 0.3s, color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #1557b0; }
+        .ethnic-note {
+            font-size: 0.8rem;
+            color: #b37400;
+            margin-top: 4px;
+            padding: 6px;
+            background: #fff3cd;
+            border-left: 3px solid #f9ab00;
+            border-radius: 4px;
+            display: none;
+        }
+        .ethnic-note.visible { display: block; }
+        .inline-config {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .inline-config input { width: 80px; }
+        .results {
+            margin-top: 24px;
+            background: var(--results-bg);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+        .results.visible { display: block; }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .result-value { font-weight: 700; color: var(--primary); }
+        .classification-bar {
+            height: 24px;
+            border-radius: 12px;
+            background: #c9d1d9;
+            margin: 16px 0 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .classification-fill {
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 6px 8px;
+            text-align: left;
+        }
+        th { background: var(--history-bg); color: var(--text); }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #000;
+        }
+        .tag-atleta { background: #2ea043; color: #fff; }
+        .tag-saudavel { background: #d2991d; color: #000; }
+        .tag-risco { background: #da3633; color: #fff; }
+        .tag-transicao { background: #79c0ff; color: #000; }
+        .tag-alerta { background: #f0883e; color: #000; }
+        .tag-abaixo { background: #c2185b; color: #fff; }
+        .tag-ideal { background: #58a6ff; color: #000; }
+        .tag-minimo { background: #f0883e; color: #000; }
+        .tag-sarcopenia { background: #da3633; color: #fff; }
+        .tag-intermediario { background: #a371f7; color: #fff; }
+        .note {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            font-style: italic;
+        }
+        .privacy-note {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            padding: 8px;
+            background: var(--history-bg);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+        .history { margin-top: 30px; }
+        .history h2 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text); }
+        .history-item {
+            background: var(--history-bg);
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .clear-history {
+            background: none;
+            color: #da3633;
+            border: 1px solid #da3633;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .alert-sarcopenia {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            margin-top: 12px;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 12px;
+            border: 1px solid #bee5eb;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 12px;
+            border: 1px solid #ffeeba;
+        }
+        .theme-switcher {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .theme-btn {
+            background: var(--history-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .theme-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body class="theme-light">
+    <div class="container">
+        <div class="theme-switcher">
+            <button class="theme-btn active" onclick="setTheme('light')">☀️ Claro</button>
+            <button class="theme-btn" onclick="setTheme('dark')">🌙 Escuro</button>
+            <button class="theme-btn" onclick="setTheme('sepia')">📜 Sépia</button>
+        </div>
+
+        <h1>🧬 JP7 Ultrassom — Composição Corporal &amp; Sarcopenia</h1>
+        <p class="subtitle">Protocolo Jackson &amp; Pollock (3 ou 7 dobras SAT) · Tabela de Referência por Segmento · Ajuste Étnico</p>
+        <form id="mainForm" novalidate>
+            <div class="form-group"><label for="patientId">Identificação (opcional)</label><input type="text" id="patientId" placeholder="Nome ou código"></div>
+            <div class="form-group"><label for="sex">Sexo</label><select id="sex" required><option value="">Selecione...</option><option value="male">Masculino</option><option value="female">Feminino</option></select></div>
+            <div class="form-group"><label for="age">Idade (anos)</label><input type="number" id="age" min="18" max="80" step="1" required placeholder="Ex: 30"></div>
+            <div class="form-group"><label for="weight">Peso (kg) — opcional</label><input type="number" id="weight" min="30" max="250" step="0.1" placeholder="Ex: 78.5"></div>
+            <div class="form-group">
+                <label for="ethnicity">Etnia</label>
+                <select id="ethnicity" required>
+                    <option value="white">Pele branca (padrão)</option>
+                    <option value="black">Pele negra (+2.95%)</option>
+                </select>
+                <div class="inline-config" id="adjustConfig" style="display:none;">
+                    <span>Fator de ajuste (%):</span>
+                    <input type="number" id="adjustFactor" value="2.95" step="0.01" min="0" max="10">
+                </div>
+                <div class="ethnic-note" id="ethnicNote">ℹ️ JP subestima %GC em pessoas negras em ~2.95% (Zillikens &amp; Conway, 1990).</div>
+            </div>
+
+            <h3 style="margin-top:20px; color: var(--text);">Gordura Subcutânea (SAT) — 7 pontos (mm)</h3>
+            <p class="note" style="margin-bottom:10px;">Preencha as 7 dobras ou apenas as 3 do protocolo reduzido (Peitoral, Abdômen, Coxa para homens; Tríceps, Suprailíaca, Coxa para mulheres).</p>
+            <div class="grid-2">
+                <div class="form-group"><label for="sf1">Peitoral</label><input type="number" id="sf1" step="0.1" min="0" max="80"></div>
+                <div class="form-group"><label for="sf2">Axilar Média</label><input type="number" id="sf2" step="0.1" min="0" max="80"></div>
+                <div class="form-group"><label for="sf3">Tríceps</label><input type="number" id="sf3" step="0.1" min="0" max="80"></div>
+                <div class="form-group"><label for="sf4">Subescapular</label><input type="number" id="sf4" step="0.1" min="0" max="80"></div>
+                <div class="form-group"><label for="sf5">Abdômen</label><input type="number" id="sf5" step="0.1" min="0" max="80"></div>
+                <div class="form-group"><label for="sf6">Suprailíaca</label><input type="number" id="sf6" step="0.1" min="0" max="80"></div>
+                <div class="form-group"><label for="sf7">Coxa</label><input type="number" id="sf7" step="0.1" min="0" max="80"></div>
+            </div>
+
+            <h3 style="margin-top:20px; color: var(--text);">Espessura Muscular (MT) — 5 pontos (mm)</h3>
+            <div class="grid-2">
+                <div class="form-group"><label for="m1">Bíceps Braquial</label><input type="number" id="m1" step="0.1" min="0" max="100"></div>
+                <div class="form-group"><label for="m2">Quadríceps (RF+VI)</label><input type="number" id="m2" step="0.1" min="0" max="100"></div>
+                <div class="form-group"><label for="m3">Reto Femoral (RF)</label><input type="number" id="m3" step="0.1" min="0" max="100"></div>
+                <div class="form-group"><label for="m4">Reto Abdominal</label><input type="number" id="m4" step="0.1" min="0" max="100"></div>
+                <div class="form-group"><label for="m5">Tibial Anterior</label><input type="number" id="m5" step="0.1" min="0" max="100"></div>
+            </div>
+            <button type="submit">Calcular Diagnóstico Completo</button>
+        </form>
+
+        <div id="results" class="results"></div>
+
+        <div class="history" id="historySection">
+            <h2>📋 Histórico</h2>
+            <div id="historyList"></div>
+            <button class="clear-history" id="clearHistory">Limpar histórico</button>
+        </div>
+
+        <div class="privacy-note">
+            🔒 <strong>Privacidade:</strong> Os dados inseridos são armazenados apenas no armazenamento local do seu navegador (localStorage). Nenhuma informação é enviada a servidores externos. Recomenda-se limpar o histórico após o uso em dispositivos compartilhados.
+        </div>
+    </div>
+
+    <script>
+        // ============ FUNÇÕES AUXILIARES ============
+        
+        // Escape para prevenir XSS
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return str;
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ============ TEMAS ============
+        function setTheme(theme) {
+            document.body.className = 'theme-' + theme;
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.theme-btn[onclick="setTheme('${theme}')"]`).classList.add('active');
+            localStorage.setItem('jp7us-theme', theme);
+        }
+        (function() {
+            const saved = localStorage.getItem('jp7us-theme') || 'light';
+            setTheme(saved);
+        })();
+
+        // ============ TABELAS DE REFERÊNCIA ============
+        const fatTable = {
+            'Peitoral':      { atleta: [4,8], saudavel: [8,16], risco: 22 },
+            'Axilar Média':  { atleta: [5,9], saudavel: [10,18], risco: 24 },
+            'Tríceps':       { atleta: [3,6], saudavel: [7,15], risco: 20 },
+            'Subescapular':  { atleta: [4,7], saudavel: [8,14], risco: 18 },
+            'Abdominal':     { atleta: [4,8], saudavel: [10,20], risco: 25 },
+            'Suprailíaca':   { atleta: [3,6], saudavel: [7,16], risco: 21 },
+            'Coxa Anterior': { atleta: [3,5], saudavel: [6,12], risco: 18 }
+        };
+
+        const muscleTable = {
+            'Bíceps Braquial':      { ideal: 35, saudavel: [25,32], sarcopenia: 20 },
+            'Quadríceps (RF+VI)':   { ideal: 40, saudavel: [32,38], sarcopenia: 31.9 },
+            'Reto Femoral (RF)':    { ideal: 25, saudavel: [20,24], sarcopenia: 19.1 },
+            'Reto Abdominal':       { ideal: 15, saudavel: [10,14], sarcopenia: 8 },
+            'Tibial Anterior':      { ideal: 25, saudavel: [22,24], sarcopenia: 20 }
+        };
+
+        const acsmTable = {
+            male: [
+                { label: 'Gordura Essencial', min: 2, max: 5.999, color: '#58a6ff' },
+                { label: 'Atleta', min: 6, max: 13.999, color: '#2ea043' },
+                { label: 'Fitness/Aptidão', min: 14, max: 17.999, color: '#d2991d' },
+                { label: 'Aceitável/Saudável', min: 18, max: 24.999, color: '#f0883e' },
+                { label: 'Sobrepeso', min: 25, max: 30.999, color: '#da3633' },
+                { label: 'Obesidade', min: 31, max: 99, color: '#a371f7' }
+            ],
+            female: [
+                { label: 'Gordura Essencial', min: 10, max: 13.999, color: '#58a6ff' },
+                { label: 'Atleta', min: 14, max: 20.999, color: '#2ea043' },
+                { label: 'Fitness/Aptidão', min: 21, max: 24.999, color: '#d2991d' },
+                { label: 'Aceitável/Saudável', min: 25, max: 31.999, color: '#f0883e' },
+                { label: 'Sobrepeso', min: 32, max: 38.999, color: '#da3633' },
+                { label: 'Obesidade', min: 39, max: 99, color: '#a371f7' }
+            ]
+        };
+
+        function classifyFat(site, value) {
+            const ref = fatTable[site];
+            if (!ref) return null;
+            if (value >= ref.atleta[0] && value <= ref.atleta[1])
+                return { cls: 'Atleta', tag: 'tag-atleta' };
+            if (value >= ref.saudavel[0] && value <= ref.saudavel[1])
+                return { cls: 'Saudável', tag: 'tag-saudavel' };
+            if (value > ref.risco)
+                return { cls: 'Risco Metabólico', tag: 'tag-risco' };
+            if (value > ref.atleta[1] && value < ref.saudavel[0])
+                return { cls: 'Transição', tag: 'tag-transicao' };
+            if (value > ref.saudavel[1] && value <= ref.risco)
+                return { cls: 'Alerta', tag: 'tag-alerta' };
+            if (value < ref.atleta[0])
+                return { cls: 'Extremamente baixo', tag: 'tag-abaixo' };
+            return { cls: 'Abaixo do mínimo', tag: 'tag-abaixo' };
+        }
+
+        function classifyMuscle(site, value) {
+            const ref = muscleTable[site];
+            if (!ref) return null;
+            if (value < ref.sarcopenia)
+                return { cls: 'Risco Sarcopenia', tag: 'tag-sarcopenia' };
+            if (value >= ref.saudavel[0] && value <= ref.saudavel[1])
+                return { cls: 'Mínimo Saudável', tag: 'tag-minimo' };
+            if (value > ref.saudavel[1] && value < ref.ideal)
+                return { cls: 'Intermediário', tag: 'tag-intermediario' };
+            if (value >= ref.ideal)
+                return { cls: 'Ideal', tag: 'tag-ideal' };
+            if (value >= ref.sarcopenia && value < ref.saudavel[0])
+                return { cls: 'Abaixo do esperado', tag: 'tag-alerta' };
+            return { cls: 'Não classificado', tag: '' };
+        }
+
+        // ============ EVENTOS ============
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculate();
+        });
+
+        document.getElementById('ethnicity').addEventListener('change', function() {
+            const isBlack = this.value === 'black';
+            document.getElementById('ethnicNote').classList.toggle('visible', isBlack);
+            document.getElementById('adjustConfig').style.display = isBlack ? 'flex' : 'none';
+        });
+
+        document.getElementById('clearHistory').addEventListener('click', function() {
+            if (confirm('Limpar todo o histórico?')) {
+                localStorage.removeItem('jp7usHistory');
+                renderHistory();
+            }
+        });
+
+        // ============ CÁLCULO PRINCIPAL (ATUALIZADO) ============
+        function calculate() {
+            const sex = document.getElementById('sex').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value) || null;
+            const ethnicity = document.getElementById('ethnicity').value;
+            const adjustFactor = parseFloat(document.getElementById('adjustFactor').value) || 0;
+
+            // Leitura dos valores de SAT
+            const satIds = ['sf1','sf2','sf3','sf4','sf5','sf6','sf7'];
+            const satNames = ['Peitoral','Axilar Média','Tríceps','Subescapular','Abdômen','Suprailíaca','Coxa'];
+            const satValues = satIds.map(id => {
+                const val = parseFloat(document.getElementById(id).value);
+                return isNaN(val) ? 0 : val;
+            });
+
+            // Validação de plausibilidade
+            let warnings = [];
+            satValues.forEach((val, idx) => {
+                if (val > 50) {
+                    warnings.push(`Valor de ${val.toFixed(1)} mm em ${satNames[idx]} é extremamente alto. Verifique a medição.`);
+                }
+                if (val < 0) {
+                    warnings.push(`Valor negativo detectado em ${satNames[idx]}.`);
+                }
+            });
+            if (satValues[4] > 0 && satValues[6] > 0 && (satValues[4] - satValues[6]) > 25) {
+                warnings.push("Diferença significativa (>25 mm) entre Abdômen e Coxa. Verifique técnica de medição.");
+            }
+            
+            // ALERTA DE IDADE (Correção Média Prioridade)
+            if (age > 60) {
+                warnings.push("Paciente >60 anos: Equações J&P têm menor precisão nesta faixa etária. Considere equações específicas para idosos.");
+            }
+
+            // Determinar protocolo dinâmico
+            let sum = 0;
+            let protocol = null;
+            let bd = 0;
+            let usedSites = [];
+            const filledCount = satValues.filter(v => v > 0).length;
+
+            // Lógica de protocolo corrigida (Correção Alta Prioridade)
+            if (filledCount === 7) {
+                sum = satValues.reduce((a,b) => a + b, 0);
+                protocol = '7';
+                usedSites = ['Peitoral','Axilar Média','Tríceps','Subescapular','Abdômen','Suprailíaca','Coxa'];
+            } else if (filledCount === 3) {
+                // Verifica se são as 3 dobras corretas para o sexo
+                if (sex === 'male') {
+                    const three = [satValues[0], satValues[4], satValues[6]]; // Peitoral, Abdômen, Coxa
+                    if (three.every(v => v > 0)) {
+                        sum = three.reduce((a,b) => a + b, 0);
+                        protocol = '3';
+                        usedSites = ['Peitoral','Abdômen','Coxa'];
+                    }
+                } else if (sex === 'female') {
+                    const three = [satValues[2], satValues[5], satValues[6]]; // Tríceps, Suprailíaca, Coxa
+                    if (three.every(v => v > 0)) {
+                        sum = three.reduce((a,b) => a + b, 0);
+                        protocol = '3';
+                        usedSites = ['Tríceps','Suprailíaca','Coxa'];
+                    }
+                }
+            }
+
+            // Mensagem de erro detalhada (Correção Baixa Prioridade)
+            if (!protocol) {
+                let msg = `Você preencheu ${filledCount} dobra(s).\n\n`;
+                if (filledCount > 0 && filledCount < 3) {
+                    msg += "Preencha pelo menos 3 dobras para iniciar o cálculo.\n";
+                } else if (filledCount > 3 && filledCount < 7) {
+                    msg += "Para evitar erros, preencha EXATAMENTE 3 dobras (protocolo reduzido) ou todas as 7 dobras (protocolo completo).\n";
+                }
+                msg += "\nProtocolo de 3 dobras:\n- Homens: Peitoral, Abdômen, Coxa\n- Mulheres: Tríceps, Suprailíaca, Coxa\n\nProtocolo de 7 dobras: Preencha todos os campos.";
+                alert(msg);
+                return;
+            }
+
+            // Correção para ultrassom (fator 0.95 M / 0.97 F)
+            const ultrasoundFactor = (sex === 'male') ? 0.95 : 0.97;
+            const correctedSum = sum * ultrasoundFactor;
+
+            // Cálculo da Densidade Corporal
+            if (protocol === '7') {
+                if (sex === 'male') {
+                    bd = 1.112 - 0.00043499 * correctedSum + 0.00000055 * Math.pow(correctedSum, 2) - 0.00028826 * age;
+                } else {
+                    bd = 1.097 - 0.00046971 * correctedSum + 0.00000056 * Math.pow(correctedSum, 2) - 0.00012828 * age;
+                }
+            } else if (protocol === '3') {
+                if (sex === 'male') {
+                    bd = 1.10938 - 0.0008267 * correctedSum + 0.0000016 * Math.pow(correctedSum, 2) - 0.0002574 * age;
+                } else {
+                    bd = 1.0994921 - 0.0009929 * correctedSum + 0.0000023 * Math.pow(correctedSum, 2) - 0.0001392 * age;
+                }
+            }
+
+            let bfRaw = (495 / bd) - 450;
+            let bfAdjusted = bfRaw;
+            if (ethnicity === 'black') {
+                bfAdjusted += adjustFactor;
+            }
+
+            // Intervalo de confiança (SEE)
+            const see = (sex === 'male') ? 3.5 : 3.8;
+            const ciLower = bfAdjusted - see;
+            const ciUpper = bfAdjusted + see;
+
+            // Classificação ACSM
+            const acsm = acsmTable[sex];
+            let acsmClass = acsm[acsm.length - 1];
+            for (let c of acsm) {
+                if (bfAdjusted >= c.min && bfAdjusted <= c.max) {
+                    acsmClass = c;
+                    break;
+                }
+            }
+
+            // Diagnóstico por segmento (gordura) - TODOS OS 7 SÍTIOS
+            const fatSitesMap = {
+                'Peitoral': 0,
+                'Axilar Média': 1,
+                'Tríceps': 2,
+                'Subescapular': 3,
+                'Abdominal': 4,
+                'Suprailíaca': 5,
+                'Coxa Anterior': 6
+            };
+            let fatDiagRows = '';
+            for (const [site, idx] of Object.entries(fatSitesMap)) {
+                if (satValues[idx] > 0) {
+                    const res = classifyFat(site, satValues[idx]);
+                    fatDiagRows += `<tr>
+                        <td>${site}</td>
+                        <td>${satValues[idx].toFixed(1)}</td>
+                        <td><span class="tag ${res.tag}">${res.cls}</span></td>
+                    </tr>`;
+                }
+            }
+
+            // Nota sobre Peitoral/Axilar (Correção Média Prioridade)
+            const hasSpecialSites = satValues[0] > 0 || satValues[1] > 0;
+            const specialNote = hasSpecialSites ? 
+                '<p class="note">Nota: Classificações para Peitoral e Axilar Média são estimativas baseadas em protocolos clínicos. Estudos validados limitados para ultrassom nestes sítios específicos.</p>' : '';
+
+            // Diagnóstico muscular
+            const muscleIds = ['m1','m2','m3','m4','m5'];
+            const muscleLabels = ['Bíceps Braquial','Quadríceps (RF+VI)','Reto Femoral (RF)','Reto Abdominal','Tibial Anterior'];
+            const muscleValues = muscleIds.map(id => {
+                const val = parseFloat(document.getElementById(id).value);
+                return isNaN(val) ? 0 : val;
+            });
+            const hasMuscleData = muscleValues.some(v => v > 0);
+
+            let muscleDiagRows = '';
+            let sarcopeniaFlag = false;
+            if (hasMuscleData) {
+                for (let i = 0; i < muscleLabels.length; i++) {
+                    if (muscleValues[i] > 0) {
+                        const res = classifyMuscle(muscleLabels[i], muscleValues[i]);
+                        if (res.cls === 'Risco Sarcopenia') sarcopeniaFlag = true;
+                        muscleDiagRows += `<tr>
+                            <td>${muscleLabels[i]}</td>
+                            <td>${muscleValues[i].toFixed(1)}</td>
+                            <td><span class="tag ${res.tag}">${res.cls}</span></td>
+                        </tr>`;
+                    }
+                }
+            }
+
+            // Montagem do relatório
+            let html = `
+                <div class="result-item"><span>Protocolo:</span><span class="result-value">${protocol} dobras (${usedSites.join(', ')})</span></div>
+                <div class="result-item"><span>Soma (${usedSites.length} SAT):</span><span class="result-value">${sum.toFixed(1)} mm</span></div>
+                ${protocol === '3' ? '<div class="alert-warning">⚠️ Protocolo de 3 dobras utilizado. A precisão pode ser ligeiramente menor do que o protocolo de 7 dobras.</div>' : ''}
+                ${warnings.length > 0 ? `<div class="alert-warning"><strong>⚠️ Atenção:</strong><br>${warnings.join('<br>')}</div>` : ''}
+                <div class="result-item"><span>Densidade Corporal:</span><span class="result-value">${bd.toFixed(4)} g/ml</span></div>
+                <div class="result-item"><span>% Gordura (Siri):</span><span class="result-value">${bfAdjusted.toFixed(1)}%${ethnicity === 'black' ? ' (ajustado +' + adjustFactor + '%)' : ''}</span></div>
+                <div class="result-item"><span>Intervalo de Confiança (±${see}%):</span><span class="result-value">${ciLower.toFixed(1)}% a ${ciUpper.toFixed(1)}%</span></div>
+                ${weight ? `<div class="result-item"><span>Massa Gorda / Magra:</span><span class="result-value">${(weight * bfAdjusted / 100).toFixed(1)} kg / ${(weight * (1 - bfAdjusted / 100)).toFixed(1)} kg</span></div>` : ''}
+                <div style="margin-top:12px;"><strong>Classificação Global (ACSM):</strong> ${acsmClass.label}</div>
+                <div class="classification-bar"><div class="classification-fill" style="width:100%; background:${acsmClass.color}">${acsmClass.label}</div></div>
+                <div class="note">Erro estimado (SEE): ±${see}% (${sex === 'male' ? 'Homens' : 'Mulheres'})</div>
+                <h3 style="margin-top:20px; color: var(--text);">📊 Diagnóstico por Segmento (Gordura)</h3>
+                ${fatDiagRows ? `<table><tr><th>Ponto</th><th>SAT (mm)</th><th>Classificação</th></tr>${fatDiagRows}</table>${specialNote}` : '<p>Nenhum dado de gordura segmentar disponível.</p>'}
+            `;
+
+            if (hasMuscleData) {
+                html += `
+                    <h3 style="margin-top:20px; color: var(--text);">💪 Espessura Muscular</h3>
+                    <table>
+                        <tr><th>Músculo</th><th>MT (mm)</th><th>Classificação</th></tr>
+                        ${muscleDiagRows}
+                    </table>
+                `;
+                if (sarcopeniaFlag) {
+                    html += `<div class="alert-sarcopenia">⚠️ Alerta: Risco de sarcopenia detectado em um ou mais sítios musculares.</div>`;
+                }
+            } else {
+                html += `<div class="alert-info">ℹ️ Nenhuma medida muscular foi inserida. O diagnóstico de sarcopenia não foi realizado.</div>`;
+            }
+
+            html += `
+                <div class="note">
+                    JP7 adaptado ao ultrassom modo-A conforme prática clínica.<br>
+                    Equações originais: Jackson &amp; Pollock (1978/1980); Siri (1961).<br>
+                    Ajuste étnico: Zillikens &amp; Conway (1990).<br>
+                    Correção ultrassom: Fator de correção aplicado (0.95 M / 0.97 F).<br>
+                    Tabela de referência por segmento: protocolo clínico do profissional.
+                </div>
+            `;
+
+            document.getElementById('results').innerHTML = html;
+            document.getElementById('results').classList.add('visible');
+
+            saveHistory({
+                patientId: document.getElementById('patientId').value || '—',
+                sex, age,
+                protocol,
+                bf: bfAdjusted.toFixed(2), // Armazena 2 casas decimais
+                classification: acsmClass.label,
+                date: new Date().toLocaleString()
+            });
+            renderHistory();
+        }
+
+        function saveHistory(entry) {
+            const history = JSON.parse(localStorage.getItem('jp7usHistory') || '[]');
+            history.unshift(entry);
+            if (history.length > 20) history.pop();
+            localStorage.setItem('jp7usHistory', JSON.stringify(history));
+        }
+
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem('jp7usHistory') || '[]');
+            const list = document.getElementById('historyList');
+            if (history.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary);">Nenhuma avaliação salva.</p>';
+                return;
+            }
+            // Uso de escapeHTML para prevenir XSS
+            list.innerHTML = history.map(h => `
+                <div class="history-item">
+                    <strong>${escapeHTML(h.patientId)}</strong> — ${h.date}<br>
+                    ${h.sex === 'male' ? '♂' : '♀'} ${h.age}a | ${h.protocol} dobras | %GC: ${parseFloat(h.bf).toFixed(1)}% | ${h.classification}
+                </div>
+            `).join('');
+        }
+        renderHistory();
+
+        // ============ PWA ============
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE = 'jp7us-cache-v7';
+                self.addEventListener('install', e => {
+                    e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/','/index.html'])));
+                });
+                self.addEventListener('fetch', e => {
+                    e.respondWith(
+                        caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+                            if (res.ok) {
+                                let r2 = res.clone();
+                                caches.open(CACHE).then(c => c.put(e.request, r2));
+                            }
+                            return res;
+                        }))
+                    );
+                });
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+        }
+    </script>
+</body>
+</html>
