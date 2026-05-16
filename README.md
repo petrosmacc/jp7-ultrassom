@@ -3,7 +3,7 @@
 **Ferramenta clínica para avaliação de composição corporal por ultrassom modo‑A, baseada no protocolo de Jackson & Pollock (3 ou 7 dobras) e tabelas de referência segmentar.**
 
 ## 🔗 Acesso rápido
-- **Aplicação online**: [https://seu-usuario.github.io/jp7-ultrassom/](https://seu-usuario.github.io/jp7-ultrassom/)
+- **Aplicação online**: [https://seu-usuario.github.io/jp7-ultrassom/](https://petrosmacc.github.io/jp7-ultrassom/)
 - **PWA**: pode ser instalada em celulares/desktops. Funciona offline.
 
 ## ⚙️ Funcionalidades
